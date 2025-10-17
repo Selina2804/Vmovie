@@ -9,7 +9,7 @@ import { useMovies } from "../../context/MovieContext";
 
 // MovieCard bọc Link để click được
 const MovieCard = ({ movie }) => (
-  <Link to={`/xem-phim/${movie.id}`} className="movie-card-link">
+  <Link style={{textDecoration:'none'}} to={`/xem-phim/${movie.id}`} className="movie-card-link">
     <div className="movie-card">
       <img src={movie.image} alt={movie.title} />
       <div className="movie-info">

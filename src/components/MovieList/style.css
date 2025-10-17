@@ -87,11 +87,13 @@
   font-weight: 600;
   margin-bottom: 4px;
   color: #fff;
+
 }
 
 .movie-info p {
   font-size: 12px;
   color: #b0b0b0;
+   
 }
 
 @media (max-width: 768px) {
