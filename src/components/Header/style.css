@@ -1,11 +1,13 @@
+/* ============================== */
+/* 🎬 HEADER CHÍNH */
+/* ============================== */
 .header {
   display: flex;
   justify-content: space-between;
   width: 100vw;
-  left: 0;
   align-items: center;
   padding: 10px 40px;
-  background: rgba(0, 0, 0, 0.25); /* 🌟 Trong suốt nhẹ lúc đầu */
+  background: rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(8px);
   color: #fff;
   position: fixed;
@@ -16,9 +18,8 @@
   font-family: "Poppins", sans-serif;
 }
 
-/* Khi cuộn xuống */
 .header.scrolled {
-  background: rgba(0, 0, 0, 0.85); /* 🌟 Đậm hơn */
+  background: rgba(0, 0, 0, 0.85);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
@@ -72,11 +73,14 @@
   font-size: 18px;
 }
 
-/* === Navigation === */
+/* ============================== */
+/* 🎬 NAVIGATION */
+/* ============================== */
 .nav {
   display: flex;
   align-items: center;
   gap: 25px;
+  white-space: nowrap; /* ✅ Không xuống dòng */
 }
 
 .nav a {
@@ -84,20 +88,74 @@
   text-decoration: none;
   font-size: 15px;
   font-weight: 500;
-  transition: 0.3s;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
 }
 
 .nav a:hover {
   color: #ffcc00;
 }
 
-.dropdown a {
-  display: flex;
+/* ============================== */
+/* 🎬 DROPDOWN CLICK (Thể loại & Quốc gia) */
+/* ============================== */
+.dropdown-click {
+  position: relative;
+  display: flex; /* ✅ giữ trên cùng 1 hàng */
   align-items: center;
+  cursor: pointer;
+  user-select: none;
   gap: 5px;
+  color: #fff;
+  font-weight: 500;
+  white-space: nowrap; /* ✅ không cho xuống dòng */
+  transition: color 0.3s;
 }
 
-/* === Right === */
+.dropdown-click:hover {
+  color: #ffcc00;
+}
+
+.dropdown-click > span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dropdown-menu-large {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #1b1b1b;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  min-width: 200px;
+  border-radius: 8px;
+  z-index: 100;
+  margin-top: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.dropdown-item {
+  padding: 6px 10px;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.dropdown-item:hover {
+  background: #333;
+}
+
+/* ============================== */
+/* 🎬 USER MENU (Avatar, Login) */
+/* ============================== */
 .header-right {
   display: flex;
   align-items: center;
@@ -123,141 +181,6 @@
   transform: translateY(-1px);
 }
 
-/* === Responsive === */
-@media (max-width: 900px) {
-  .search-bar {
-    display: none;
-  }
-
-  .nav {
-    gap: 18px;
-  }
-
-  .login-btn {
-    padding: 6px 14px;
-    font-size: 13px;
-  }
-}
-/* === Gợi ý tìm kiếm (giữ nguyên phong cách cũ) === */
-.suggestion-list {
-  position: absolute;
-  top: 48px; /* cách ô input một chút */
-  left: 0;
-  width: 250px;
-  background: rgba(0, 0, 0, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  list-style: none;
-  margin: 0;
-  padding: 6px 0;
-  backdrop-filter: blur(8px);
-  z-index: 1000;
-}
-
-.suggestion-item {
-  padding: 8px 14px;
-  color: #fff;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.suggestion-item:hover {
-  background: rgba(255, 204, 0, 0.15);
-  color: #ffcc00;
-}
-/* === Gợi ý tìm kiếm (cố định vị trí & responsive) === */
-.search-bar {
-  position: relative; /* Quan trọng: làm cha cho dropdown */
-}
-
-.suggestion-list {
-  position: absolute;
-  top: calc(100% + 6px); /* nằm ngay dưới input, cách nhẹ 6px */
-  left: 0;
-  width: 100%; /* canh đúng chiều rộng của ô search */
-  background: rgba(0, 0, 0, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  list-style: none;
-  margin: 0;
-  padding: 5px 0;
-  z-index: 9999;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-/* Mỗi item gợi ý */
-.suggestion-item {
-  padding: 10px 15px;
-  color: #fff;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.suggestion-item:hover {
-  background: rgba(255, 204, 0, 0.15);
-  color: #ffcc00;
-}
-
-/* Mobile: đảm bảo dropdown không bị lệch */
-@media (max-width: 900px) {
-  .search-bar {
-    width: 180px;
-  }
-
-  .suggestion-list {
-    width: 180px;
-    top: calc(100% + 5px);
-  }
-}
-/* === Dropdown Menu === */
-.dropdown {
-  position: relative;
-}
-
-.dropdown-btn {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: rgba(20, 20, 20, 0.95);
-  list-style: none;
-  padding: 8px 0;
-  margin: 0;
-  border-radius: 8px;
-  min-width: 150px;
-  z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-}
-
-.dropdown-menu li {
-  padding: 8px 15px;
-  color: #fff;
-  cursor: pointer;
-  transition: 0.2s;
-  white-space: nowrap;
-}
-
-.dropdown-menu li:hover {
-  background: #ffcc00;
-  color: #000;
-}
 .user-menu {
   display: flex;
   align-items: center;
@@ -298,207 +221,17 @@
 .dropdown-menu button:hover {
   background: #333;
 }
-.nav {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
 
-.nav a {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s;
-}
-
-.nav a:hover {
-  color: #f39c12;
-}
-
-/* Dropdown */
-.dropdown {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-}
-
-.dropdown span {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: white;
-  font-weight: 500;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #222;
-  min-width: 160px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  z-index: 10;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 5px;
-}
-
-.dropdown-content a {
-  color: white;
-  padding: 10px 14px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-content a:hover {
-  background-color: #444;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-.dropdown-click {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  user-select: none;
-}
-
-.dropdown-click > span {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: #fff;
-  font-weight: 500;
-}
-
-.dropdown-menu-large {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: #1b1b1b;
-  padding: 10px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  min-width: 200px;
-  border-radius: 8px;
-  z-index: 100;
-  margin-top: 6px;
-}
-
-.dropdown-item {
-  padding: 5px 8px;
-  color: #fff;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-.dropdown-item:hover {
-  background: #333;
-}
+/* ============================== */
+/* 🎬 GỢI Ý TÌM KIẾM */
+/* ============================== */
 .search-suggestion-box {
   position: absolute;
   top: 48px;
   left: 0;
   width: 100%;
-  background: #1a1a1a;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
-  z-index: 100;
-  animation: fadeIn 0.25s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.suggestion-title {
-  padding: 8px 14px;
-  font-size: 13px;
-  color: #aaa;
-  border-bottom: 1px solid #333;
-}
-
-.search-suggestion-box ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.suggestion-item {
-  display: flex;
-  align-items: center;
-  padding: 10px 14px;
-  color: white;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.suggestion-item:hover {
-  background: #2a2a2a;
-}
-
-.suggestion-item img {
-  width: 50px;
-  height: 70px;
-  border-radius: 5px;
-  object-fit: cover;
-  margin-right: 12px;
-}
-
-.movie-info h4 {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.movie-info p {
-  margin: 2px 0;
-  font-size: 12px;
-  color: #bbb;
-}
-
-.movie-info span {
-  font-size: 11px;
-  color: #777;
-}
-
-.see-all-btn {
-  width: 100%;
-  background: #111;
-  color: #00b3ff;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  border-top: 1px solid #333;
-}
-
-.see-all-btn:hover {
-  background: #222;
-}
-/* ============================== */
-/* 🎬 GỢI Ý TÌM KIẾM KIỂU ROPHIM */
-/* ============================== */
-
-.search-suggestion-box {
-  position: absolute;
-  top: 48px;
-  left: 0;
-  width: 100%;
-  background: rgba(25, 25, 25, 0.85); /* nền tối trong suốt */
-  backdrop-filter: blur(12px); /* hiệu ứng mờ nền */
+  background: rgba(25, 25, 25, 0.85);
+  backdrop-filter: blur(12px);
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
   overflow: hidden;
@@ -519,17 +252,14 @@
   }
 }
 
-/* Tiêu đề "Danh sách phim" */
 .suggestion-title {
   padding: 10px 16px;
   font-size: 14px;
   color: #ddd;
   font-weight: 500;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  text-align: left;
 }
 
-/* Danh sách phim */
 .search-suggestion-box ul {
   list-style: none;
   margin: 0;
@@ -538,7 +268,6 @@
   overflow-y: auto;
 }
 
-/* 🧩 Thanh cuộn đẹp & mượt */
 .search-suggestion-box ul::-webkit-scrollbar {
   width: 6px;
 }
@@ -550,7 +279,6 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Mỗi dòng phim */
 .suggestion-item {
   display: flex;
   align-items: center;
@@ -564,30 +292,19 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* Ảnh poster */
 .suggestion-item img {
   width: 55px;
   height: 75px;
   border-radius: 6px;
   object-fit: cover;
   flex-shrink: 0;
-  margin-right: 15px; /* ✅ Cách chữ 15px */
-}
-
-/* Thông tin phim */
-.movie-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  line-height: 1.4;
+  margin-right: 15px;
 }
 
 .movie-info h4 {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
-  color: #fff;
 }
 
 .movie-info p {
@@ -601,7 +318,6 @@
   color: #888;
 }
 
-/* Nút xem toàn bộ kết quả */
 .see-all-btn {
   width: 100%;
   background: rgba(255, 255, 255, 0.05);
@@ -617,13 +333,30 @@
 
 .see-all-btn:hover {
   background: rgba(255, 255, 255, 0.15);
-  color: #ffcc00; /* ✨ Hover sang vàng nhạt */
+  color: #ffcc00;
 }
-
 
 .no-results {
   padding: 14px;
   color: #bbb;
   font-size: 14px;
   text-align: center;
+}
+
+/* ============================== */
+/* 🎬 RESPONSIVE */
+/* ============================== */
+@media (max-width: 900px) {
+  .search-bar {
+    display: none;
+  }
+
+  .nav {
+    gap: 18px;
+  }
+
+  .login-btn {
+    padding: 6px 14px;
+    font-size: 13px;
+  }
 }
