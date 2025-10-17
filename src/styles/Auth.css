@@ -1,0 +1,132 @@
+.container {
+  background: linear-gradient(135deg, #0a0a0a, #1c1c1c);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+  padding: 20px;
+}
+
+.auth-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.auth-image {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.auth-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.auth-container {
+  flex: 1;
+  padding: 25px 32px;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.auth-container h2 {
+  color: #fff;
+  margin-bottom: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-form label {
+  text-align: left;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #e0e0e0;
+}
+
+.auth-form input {
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.auth-form input:focus {
+  border-color: #007bff;
+  outline: none;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.auth-form button {
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+  color: white;
+  padding: 10px 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: transform 0.2s, background 0.3s;
+}
+
+.auth-form button:hover {
+  transform: scale(1.02);
+  background: linear-gradient(135deg, #0056b3, #00aaff);
+}
+
+.error-text {
+  color: #ff5f5f;
+  font-size: 0.85rem;
+  margin-top: -6px;
+  text-align: left;
+}
+
+.another-form {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.another-form a {
+  color: #00bfff;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.another-form a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .auth-wrapper {
+    flex-direction: column;
+  }
+
+  .auth-image {
+    display: none;
+  }
+
+  .auth-container {
+    width: 100%;
+    border-left: none;
+  }
+}
