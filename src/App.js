@@ -1,35 +1,52 @@
 // src/App.js
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Header from "./components/Header";
-import Footer from "./components/Footer"; 
+import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import AllMovies from "./pages/AllMovie";
 import MovieDetail from "./pages/Detail";
-
-import { MovieProvider } from "./context/MovieContext";
+import WatchMovie from "./pages/Watch";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import { MovieProvider } from "./context/MovieContext";
 import { AuthProvider } from "./store/useAuth";
-import WatchMovie from "./pages/Watch"; 
+import AdminLayout from "./pages/Admin";
+import ManageMovies from "./pages/Admin/Movie";
+import ManageAccounts from "./pages/Admin/Account";
 import "./App.css";
 
 function App() {
+  const location = useLocation();
+
+  // Xác định có phải đang ở trang admin không
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
   return (
     <AuthProvider>
       <MovieProvider>
-        <Header />
+        {/* Nếu KHÔNG phải admin thì mới hiện header/footer */}
+        {!isAdminRoute && <Header />}
+
         <div className="main-content">
           <Routes>
+            {/* ---- Trang người dùng ---- */}
             <Route path="/" element={<Home />} />
             <Route path="/danh-sach" element={<AllMovies />} />
             <Route path="/thong-tin/:id" element={<MovieDetail />} />
-            <Route path="/xem-phim/:id" element={<WatchMovie />} /> 
+            <Route path="/xem-phim/:id" element={<WatchMovie />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+
+            {/* ---- Trang Admin riêng biệt ---- */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route path="movies" element={<ManageMovies />} />
+              <Route path="accounts" element={<ManageAccounts />} />
+            </Route>
           </Routes>
-          <Footer />
         </div>
+
+        {!isAdminRoute && <Footer />}
       </MovieProvider>
     </AuthProvider>
   );

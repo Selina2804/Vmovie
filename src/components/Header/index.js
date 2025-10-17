@@ -37,6 +37,7 @@ function Header() {
   const [showMenu, setShowMenu] = useState(false);
   const [showGenreDropdown, setShowGenreDropdown] = useState(false);
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+
   const navigate = useNavigate();
   const { allMovies } = useMovies();
   const { user, logout, updateUsername } = useAuth();
@@ -164,67 +165,66 @@ function Header() {
         <a href="/danh-sach">Danh Sách</a>
 
         {/* Thể loại dropdown */}
-<div
-  className="dropdown-click"
-  ref={genreRef}
-  onClick={() => {
-    setShowGenreDropdown(!showGenreDropdown);
-    setShowCountryDropdown(false);
-  }}
->
-  <span>
-    Thể Loại <IoIosArrowDown />
-  </span>
-  {showGenreDropdown && (
-    <div className="dropdown-menu-large">
-      {genres.map((g) => (
         <div
-          key={g}
-          className="dropdown-item"
-          onClick={() =>
-            navigate(`/danh-sach?theloai=${encodeURIComponent(g.toLowerCase())}`)
-          }
+          className="dropdown-click"
+          ref={genreRef}
+          onClick={() => {
+            setShowGenreDropdown(!showGenreDropdown);
+            setShowCountryDropdown(false);
+          }}
         >
-          {g}
+          <span>
+            Thể Loại <IoIosArrowDown />
+          </span>
+          {showGenreDropdown && (
+            <div className="dropdown-menu-large">
+              {genres.map((g) => (
+                <div
+                  key={g}
+                  className="dropdown-item"
+                  onClick={() =>
+                    navigate(`/danh-sach?theloai=${encodeURIComponent(g.toLowerCase())}`)
+                  }
+                >
+                  {g}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      ))}
-    </div>
-  )}
-</div>
 
-{/* Quốc gia dropdown */}
-<div
-  className="dropdown-click"
-  ref={countryRef}
-  onClick={() => {
-    setShowCountryDropdown(!showCountryDropdown);
-    setShowGenreDropdown(false);
-  }}
->
-  <span>
-    Quốc Gia <IoIosArrowDown />
-  </span>
-  {showCountryDropdown && (
-    <div className="dropdown-menu-large">
-      {countries.map((c) => (
+        {/* Quốc gia dropdown */}
         <div
-          key={c}
-          className="dropdown-item"
-          onClick={() =>
-            navigate(`/danh-sach?quocgia=${encodeURIComponent(c.toLowerCase())}`)
-          }
+          className="dropdown-click"
+          ref={countryRef}
+          onClick={() => {
+            setShowCountryDropdown(!showCountryDropdown);
+            setShowGenreDropdown(false);
+          }}
         >
-          {c}
+          <span>
+            Quốc Gia <IoIosArrowDown />
+          </span>
+          {showCountryDropdown && (
+            <div className="dropdown-menu-large">
+              {countries.map((c) => (
+                <div
+                  key={c}
+                  className="dropdown-item"
+                  onClick={() =>
+                    navigate(`/danh-sach?quocgia=${encodeURIComponent(c.toLowerCase())}`)
+                  }
+                >
+                  {c}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      ))}
-    </div>
-  )}
-</div>
-
       </nav>
 
       <div className="header-right">
-        {user ? (
+        {user && user.role === "user" ? (
           <div className="user-menu" onClick={() => setShowMenu(!showMenu)}>
             <img src={user.avatar} alt="avatar" className="avatar" />
             <span>{user.username}</span>

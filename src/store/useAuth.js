@@ -3,72 +3,86 @@ import { createContext, useContext, useState, useEffect } from "react";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const [users, setUsers] = useState([]);
   const [user, setUser] = useState(() => {
     const stored = localStorage.getItem("user");
     return stored ? JSON.parse(stored) : null;
   });
 
+  // Khởi tạo admin cố định
   useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) setUser(JSON.parse(stored));
+    let storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
+
+    // Admin id cố định để không bị trùng khi reload
+    const adminId = "admin-001";
+
+    if (!storedUsers.some(u => u.role === "admin")) {
+      const admin = {
+        id: adminId,
+        username: "Admin",
+        email: "admin@gmail.com",
+        password: "admin123",
+        role: "admin",
+        avatar: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
+      };
+      storedUsers.push(admin);
+      localStorage.setItem("users", JSON.stringify(storedUsers));
+    }
+
+    setUsers(storedUsers);
   }, []);
 
-  // ✅ Đăng ký tài khoản
-  const register = async (email, password, username) => {
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
-
-    if (users.find((u) => u.email === email)) {
+  // Đăng ký user mới
+  const register = (email, password, username) => {
+    if (users.find(u => u.email === email)) {
       throw new Error("Email đã tồn tại!");
     }
 
     const newUser = {
-      id: Date.now(),
+      id: Date.now().toString(),
       username,
       email,
       password,
-      avatar: "https://cdn-icons-png.flaticon.com/512/847/847969.png", // ảnh mặc định
+      role: "user",
+      avatar: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
     };
 
-    users.push(newUser);
-    localStorage.setItem("users", JSON.stringify(users));
+    const updatedUsers = [...users, newUser];
+    setUsers(updatedUsers);
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
   };
 
-  // ✅ Đăng nhập
-  const login = async (email, password) => {
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
-    const foundUser = users.find(
-      (u) => u.email === email && u.password === password
-    );
+  // Đăng nhập
+  const login = (email, password) => {
+    if (!users.length) throw new Error("Danh sách user chưa sẵn sàng!");
+
+    const foundUser = users.find(u => u.email === email && u.password === password);
     if (!foundUser) throw new Error("Sai email hoặc mật khẩu!");
 
     setUser(foundUser);
     localStorage.setItem("user", JSON.stringify(foundUser));
+    return foundUser;
   };
 
-  // ✅ Đăng xuất
+  // Đăng xuất
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
   };
 
-  // ✅ Đổi tên người dùng
+  // Update username
   const updateUsername = (newName) => {
     if (!user) return;
     const updated = { ...user, username: newName };
+    const updatedUsers = users.map(u => u.id === user.id ? updated : u);
+    setUsers(updatedUsers);
     setUser(updated);
-    localStorage.setItem("user", JSON.stringify(updated));
-
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
-    const updatedUsers = users.map((u) =>
-      u.email === user.email ? updated : u
-    );
     localStorage.setItem("users", JSON.stringify(updatedUsers));
+    localStorage.setItem("user", JSON.stringify(updated));
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, register, login, logout, updateUsername }}
-    >
+    <AuthContext.Provider value={{ user, register, login, logout, updateUsername }}>
       {children}
     </AuthContext.Provider>
   );
