@@ -11,7 +11,7 @@ const categories = [
   { label: "Siêu Nhiên", value: "siêu nhiên" },
   { label: "Phiêu Lưu", value: "phiêu lưu" },
   { label: "Hài Hước", value: "hài hước" },
-  { label: "Khoa Học Viễn Tưởng", value: "khoa học viễn tưởng" },
+  { label: "Viễn Tưởng", value: "viễn tưởng" },
 ];
 
 // Quốc gia (khớp dữ liệu JSON)

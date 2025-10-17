@@ -14,7 +14,7 @@ const genres = [
   "Kinh dị",
   "Hài hước",
   "Viễn tưởng",
-  "Hoạt hình",
+  "Anime",
   "Phiêu lưu",
   "Tâm lý",
 ];
