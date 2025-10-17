@@ -7,7 +7,7 @@ import "./style.css";
 import { Link } from "react-router-dom";
 import { useMovies } from "../../context/MovieContext";
 
-// MovieCard bọc Link để click được
+
 const MovieCard = ({ movie }) => (
   <Link style={{textDecoration:'none'}} to={`/xem-phim/${movie.id}`} className="movie-card-link">
     <div className="movie-card">

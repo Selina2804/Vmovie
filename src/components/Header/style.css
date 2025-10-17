@@ -102,14 +102,14 @@
 /* ============================== */
 .dropdown-click {
   position: relative;
-  display: flex; /* ✅ giữ trên cùng 1 hàng */
+  display: flex; 
   align-items: center;
   cursor: pointer;
   user-select: none;
   gap: 5px;
   color: #fff;
   font-weight: 500;
-  white-space: nowrap; /* ✅ không cho xuống dòng */
+  white-space: nowrap; 
   transition: color 0.3s;
 }
 
