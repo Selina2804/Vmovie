@@ -27,14 +27,12 @@ function Header() {
   const countryRef = useRef(null);
   const searchRef = useRef(null);
 
-  // Scroll effect
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Click outside dropdown
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -54,7 +52,6 @@ function Header() {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  // Close mobile menu on resize
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 900) setIsMobileMenuOpen(false);
@@ -63,7 +60,6 @@ function Header() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // --- SEARCH ---
   const handleSearch = (e) => {
     e.preventDefault();
     if (query.trim()) {
@@ -75,7 +71,6 @@ function Header() {
   const handleChange = (e) => {
     const value = e.target.value;
     setQuery(value);
-
     if (value.trim() === "") {
       setSuggestions([]);
     } else {
@@ -94,8 +89,9 @@ function Header() {
     navigate(`/thong-tin/${movie.id}`);
   };
 
-  // --- DYNAMIC GENRES AND COUNTRIES ---
-  const genres = [...new Set(allMovies.flatMap((m) => m.genre.split(", ").map((g) => g.trim())))];
+  const genres = [
+    ...new Set(allMovies.flatMap((m) => m.genre.split(", ").map((g) => g.trim()))),
+  ];
   const countries = [...new Set(allMovies.map((m) => m.country))];
 
   return (
@@ -134,7 +130,8 @@ function Header() {
                           <h4>{movie.title}</h4>
                           <p>{movie.engTitle}</p>
                           <span>
-                            T{Math.floor(Math.random() * 10) + 10} • {movie.year} • {movie.duration}
+                            T{Math.floor(Math.random() * 10) + 10} • {movie.year} •{" "}
+                            {movie.duration}
                           </span>
                         </div>
                       </li>
@@ -179,13 +176,17 @@ function Header() {
             {showGenreDropdown && (
               <div
                 className="dropdown-menu-large"
-                style={{ marginTop: "10px" }} // 🧩 cách header
+                style={{
+                  marginTop: "12px",
+                  background: "rgba(20, 20, 20, 0.98)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                }}
               >
                 {genres.map((g) => (
                   <div
                     key={g}
                     className="dropdown-item"
-                    style={{ color: "#fff" }} // 🎨 màu chữ trắng
+                    style={{ color: "#fff" }}
                     onClick={() => navigate(`/danh-sach?theloai=${g}`)}
                   >
                     {g}
@@ -210,13 +211,17 @@ function Header() {
             {showCountryDropdown && (
               <div
                 className="dropdown-menu-large"
-                style={{ marginTop: "10px" }} // 🧩 cách header
+                style={{
+                  marginTop: "12px",
+                  background: "rgba(20, 20, 20, 0.98)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                }}
               >
                 {countries.map((c) => (
                   <div
                     key={c}
                     className="dropdown-item"
-                    style={{ color: "#fff" }} // 🎨 màu chữ trắng
+                    style={{ color: "#fff" }}
                     onClick={() => navigate(`/danh-sach?quocgia=${c}`)}
                   >
                     {c}
@@ -268,6 +273,99 @@ function Header() {
           <div className="bar"></div>
         </div>
       </header>
+
+      {/* MOBILE MENU */}
+      {isMobileMenuOpen && (
+        <div className="mobile-menu">
+          <button className="close-btn" onClick={() => setIsMobileMenuOpen(false)}>
+            x
+          </button>
+
+          <a href="/">Trang Chủ</a>
+          <a href="/danh-sach">Danh Sách</a>
+
+          <div className="mobile-dropdown">
+            <span onClick={() => setShowMobileGenre(!showMobileGenre)}>
+              Thể Loại {showMobileGenre ? <IoIosArrowUp /> : <IoIosArrowDown />}
+            </span>
+            {showMobileGenre &&
+              genres.map((g) => (
+                <div
+                  key={g}
+                  className="dropdown-item"
+                  onClick={() => {
+                    navigate(`/danh-sach?theloai=${g}`);
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  {g}
+                </div>
+              ))}
+          </div>
+
+          <div className="mobile-dropdown">
+            <span onClick={() => setShowMobileCountry(!showMobileCountry)}>
+              Quốc Gia {showMobileCountry ? <IoIosArrowUp /> : <IoIosArrowDown />}
+            </span>
+            {showMobileCountry &&
+              countries.map((c) => (
+                <div
+                  key={c}
+                  className="dropdown-item"
+                  onClick={() => {
+                    navigate(`/danh-sach?quocgia=${c}`);
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  {c}
+                </div>
+              ))}
+          </div>
+
+          <div className="mobile-user-section">
+            {user ? (
+              <>
+                <div className="mobile-user" onClick={() => setShowMenu(!showMenu)}>
+                  <img src={user.avatar} alt="avatar" className="avatar" />
+                  <span>{user.username}</span>
+                </div>
+
+                {user.role === "admin" && (
+                  <button
+                    className="admin-btn"
+                    onClick={() => {
+                      navigate("/admin");
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    Về trang quản lý
+                  </button>
+                )}
+
+                <button
+                  className="logout-btn"
+                  onClick={() => {
+                    logout();
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  Đăng xuất
+                </button>
+              </>
+            ) : (
+              <button
+                className="login-btn mobile-login"
+                onClick={() => {
+                  navigate("/login");
+                  setIsMobileMenuOpen(false);
+                }}
+              >
+                <FaUser /> Đăng nhập
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }
