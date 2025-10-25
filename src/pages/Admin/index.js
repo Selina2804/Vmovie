@@ -1,71 +1,77 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./style.css";
-import logo from "../../assets/anime.jpg";
+import logoAdmin from "../../assets/anime.jpg";
 import { useNavigate } from "react-router-dom";
 import { PiBellFill } from "react-icons/pi";
 import { FaGear } from "react-icons/fa6";
 import Dashboard from "./Dashboard";
 import MovieManager from "./Movie";
 import AccountManager from "./Account";
+import { useAuth } from "../../store/useAuth";
 
 /* ================= SIDEBAR ================= */
 function Sidebar({ onMenuChange, active }) {
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    if (window.confirm("Bạn có chắc muốn đăng xuất không?")) {
-      localStorage.removeItem("user");
-      navigate("/login");
-    }
-  };
+  const handleGoHome = () => navigate("/");
 
   return (
     <aside className="admin-sidenav">
       <div className="sidenav-header">
-        <img src={logo} alt="logo" className="sidenav-logo" />
+        <img src={logoAdmin} alt="logo" className="sidenav-logo" />
         <h2 className="sidenav-title">
           Movie<span>Admin</span>
         </h2>
       </div>
 
       <nav className="sidenav-menu">
-        <a
-          className={active === "dashboard" ? "active" : ""}
-          onClick={() => onMenuChange("dashboard")}
-        >
+        <a className={active === "dashboard" ? "active" : ""} onClick={() => onMenuChange("dashboard")}>
           🏠 Dashboard
         </a>
-        <a
-          className={active === "movies" ? "active" : ""}
-          onClick={() => onMenuChange("movies")}
-        >
+        <a className={active === "movies" ? "active" : ""} onClick={() => onMenuChange("movies")}>
           🎬 Quản lý phim
         </a>
-        <a
-          className={active === "accounts" ? "active" : ""}
-          onClick={() => onMenuChange("accounts")}
-        >
+        <a className={active === "accounts" ? "active" : ""} onClick={() => onMenuChange("accounts")}>
           👤 Quản lý tài khoản
         </a>
+        <a onClick={handleGoHome} className="home-link">
+          🏡 Xem trang chủ
+        </a>
       </nav>
-
-      <div className="sidenav-footer">
-        <p>Xin chào, Admin!</p>
-        <button onClick={handleLogout} className="logout-btn">
-          Đăng xuất
-        </button>
-      </div>
     </aside>
   );
 }
 
 /* ================= NAVBAR ================= */
 function Navbar({ title }) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+  const { logout } = useAuth(); // dùng chung với Header
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    if (window.confirm("Bạn có chắc muốn đăng xuất không?")) {
+      localStorage.removeItem("user"); // xóa admin
+      logout(); // logout user context → Header cũng logout
+      navigate("/login");
+    }
+  };
+
   return (
     <header className="admin-navbar">
       <div className="navbar-left">
         <h3>{title}</h3>
       </div>
+
       <div className="navbar-right">
         <input type="text" placeholder="Tìm kiếm..." className="search-input" />
         <button className="icon-btn">
@@ -74,7 +80,25 @@ function Navbar({ title }) {
         <button className="icon-btn">
           <FaGear />
         </button>
-        <img src={logo} alt="user" className="navbar-avatar" />
+
+        <div className="navbar-avatar-wrapper" ref={dropdownRef}>
+          <img
+            src={logoAdmin}
+            alt="user avatar"
+            className="navbar-avatar"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+          />
+          {dropdownOpen && (
+            <div className="avatar-dropdown">
+              <button className="dropdown-item" onClick={() => alert("Chức năng đổi tên sẽ thêm sau!")}>
+                Đổi tên
+              </button>
+              <button className="dropdown-item logout" onClick={handleLogout}>
+                Đăng xuất
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

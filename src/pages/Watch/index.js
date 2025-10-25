@@ -1,18 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useMovies } from "../../context/MovieContext";
+import axios from "axios";
 import "./style.css";
 
 const WatchMovie = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { allMovies } = useMovies();
 
-  const movie = allMovies.find((m) => m.id === parseInt(id));
+  const [movie, setMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [currentServer, setCurrentServer] = useState("1");
   const [currentEpisode, setCurrentEpisode] = useState(1);
 
+  useEffect(() => {
+    // Lấy dữ liệu phim từ MockAPI
+    axios
+      .get(`https://68faff8894ec96066024411b.mockapi.io/movies/${id}`)
+      .then((response) => {
+        setMovie(response.data); // Cập nhật phim tìm được
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError("Lỗi tải dữ liệu");
+        setLoading(false);
+      });
+  }, [id]);
+
+  // Nếu dữ liệu đang được tải
+  if (loading) {
+    return <div>Đang tải phim...</div>;
+  }
+
+  // Nếu có lỗi
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  // Nếu không có phimƯ
   if (!movie) {
     return (
       <div className="watch-movie-page" style={{ color: "white", padding: "100px" }}>
@@ -24,7 +50,7 @@ const WatchMovie = () => {
     );
   }
 
-  // Server video gồm: 1 = DoodStream, 2 & 3 backup (YouTube, Dailymotion...)
+  // Các server video
   const servers = {
     1: movie.videoUrl,
     2: movie.backupUrls[0],

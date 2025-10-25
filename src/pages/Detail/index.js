@@ -1,17 +1,41 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useMovies } from "../../context/MovieContext";
+import axios from "axios";
 import "./style.css";
 
 const MovieDetail = () => {
   const { id } = useParams(); // lấy id từ URL (ví dụ /thong-tin/5)
   const navigate = useNavigate();
-  const { allMovies } = useMovies();
+  
+  const [movie, setMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Tìm phim tương ứng
-  const movie = allMovies.find((m) => m.id === parseInt(id));
+  useEffect(() => {
+    // Lấy dữ liệu từ MockAPI khi component được render
+    axios
+      .get(`https://68faff8894ec96066024411b.mockapi.io/movies/${id}`)
+      .then((response) => {
+        setMovie(response.data); // Cập nhật phim tìm được
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError("Lỗi tải dữ liệu");
+        setLoading(false);
+      });
+  }, [id]);
 
-  // Nếu không có phim phù hợp
+  // Nếu dữ liệu đang được tải
+  if (loading) {
+    return <div>Đang tải phim...</div>;
+  }
+
+  // Nếu có lỗi
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  // Nếu không có phim
   if (!movie) {
     return (
       <div className="movie-detail-page" style={{ padding: "120px", color: "white" }}>
@@ -49,12 +73,15 @@ const MovieDetail = () => {
               <strong>Trạng thái:</strong> Tập 1 Vietsub
             </p>
             <p>
-              <strong>Thời lượng:</strong> 45 phút/tập
+              <strong>Thời lượng:</strong> {movie.duration}
             </p>
             <p>
               <strong>Thể loại:</strong>{" "}
-              <span className="tag">Hành Động</span>{" "}
-              <span className="tag">Phiêu Lưu</span>
+              {movie.genre.split(",").map((g, index) => (
+                <span key={index} className="tag">
+                  {g.trim()}
+                </span>
+              ))}
             </p>
             <p>
               <strong>Đánh giá:</strong> ⭐⭐⭐⭐☆ (8.7/10)
@@ -66,10 +93,7 @@ const MovieDetail = () => {
       {/* Mô tả phim */}
       <div className="movie-detail-description">
         <h2>Nội dung chi tiết</h2>
-        <p>
-          {`"${movie.title}" là một bộ phim hấp dẫn với nhiều tình tiết lôi cuốn.
-          Bộ phim mang đến trải nghiệm tuyệt vời về hành trình, cảm xúc và những giá trị nhân văn sâu sắc.`}
-        </p>
+        <p>{movie.description}</p>
 
         <div className="keyword-tags">
           <span>#{movie.title.replace(/\s+/g, "")}</span>

@@ -1,15 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import "./style.css";
 import { Link } from "react-router-dom";
-import { useMovies } from "../../context/MovieContext";
+import axios from "axios";
 
-
+// 🎬 Thẻ phim
 const MovieCard = ({ movie }) => (
-  <Link style={{textDecoration:'none'}} to={`/xem-phim/${movie.id}`} className="movie-card-link">
+  <Link
+    style={{ textDecoration: "none" }}
+    to={`/thong-tin/${movie.id}`}
+    className="movie-card-link"
+  >
     <div className="movie-card">
       <img src={movie.image} alt={movie.title} />
       <div className="movie-info">
@@ -20,6 +24,7 @@ const MovieCard = ({ movie }) => (
   </Link>
 );
 
+// 🎞️ Mục phim (có Swiper)
 const MovieSection = ({ title, movies }) => (
   <div className="movie-section">
     <div className="movie-header">
@@ -59,18 +64,41 @@ const MovieSection = ({ title, movies }) => (
   </div>
 );
 
+// 📋 Danh sách tổng hợp phim
 const MovieList = () => {
-  const { allMovies } = useMovies();
+  const [allMovies, setAllMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!allMovies || allMovies.length === 0) return <p>Đang tải danh sách phim...</p>;
+  // Fetch data từ MockAPI
+  useEffect(() => {
+    axios
+      .get("https://68faff8894ec96066024411b.mockapi.io/movies")
+      .then((res) => {
+        setAllMovies(res.data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Lỗi tải danh sách phim");
+        setLoading(false);
+      });
+  }, []);
 
+  if (loading) return <p>Đang tải danh sách phim...</p>;
+  if (error) return <p>{error}</p>;
+
+  // Chia 2 section: Anime & Phim Hay và Anime
   const firstSection = allMovies.slice(0, 6);
-  const secondSection = allMovies.slice(6, 12);
+  const animeSection = allMovies.filter((m) =>
+    m.genre.toLowerCase().includes("anime")
+  );
 
   return (
     <>
       <MovieSection title="Anime & Phim Hay" movies={firstSection} />
-      {secondSection.length > 0 && <MovieSection title="Phim Khác" movies={secondSection} />}
+      {animeSection.length > 0 && (
+        <MovieSection title="Anime" movies={animeSection} />
+      )}
     </>
   );
 };

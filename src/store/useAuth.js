@@ -1,91 +1,95 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { create } from "zustand";
+import axios from "axios";
 
-const AuthContext = createContext();
+// Địa chỉ của Mock API
+const BASE_URL = "https://68faff8894ec96066024411b.mockapi.io";
 
-export const AuthProvider = ({ children }) => {
-  const [users, setUsers] = useState([]);
-  const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem("user");
-    return stored ? JSON.parse(stored) : null;
-  });
-
-  // Khởi tạo admin cố định
-  useEffect(() => {
-    let storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
-
-    // Admin id cố định để không bị trùng khi reload
-    const adminId = "admin-001";
-
-    if (!storedUsers.some(u => u.role === "admin")) {
-      const admin = {
-        id: adminId,
-        username: "Admin",
-        email: "admin@gmail.com",
-        password: "admin123",
-        role: "admin",
-        avatar: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
-      };
-      storedUsers.push(admin);
-      localStorage.setItem("users", JSON.stringify(storedUsers));
-    }
-
-    setUsers(storedUsers);
-  }, []);
+// Tạo store với zustand
+export const useAuth = create((set) => ({
+  user: JSON.parse(localStorage.getItem("user")) || null, // Lấy thông tin người dùng từ localStorage nếu có
 
   // Đăng ký user mới
-  const register = (email, password, username) => {
-    if (users.find(u => u.email === email)) {
-      throw new Error("Email đã tồn tại!");
+  register: async (email, password, username) => {
+    try {
+      // Gửi yêu cầu POST đến MockAPI để tạo tài khoản mới, mặc định role là "user"
+      const { data } = await axios.post(`${BASE_URL}/account`, {
+        email,
+        password,
+        username,
+        role: "user", // Mặc định là "user", không cho phép đăng ký admin
+      });
+
+      // Lưu thông tin người dùng vào localStorage
+      localStorage.setItem("user", JSON.stringify(data));
+
+      // Cập nhật trạng thái của store
+      set({ user: data });
+
+      return data; // Trả về dữ liệu người dùng để xử lý sau (nếu cần)
+    } catch (error) {
+      console.error("Đăng ký thất bại: ", error);
+      throw new Error("Đăng ký thất bại"); // Đẩy lỗi ra để thông báo cho người dùng
     }
-
-    const newUser = {
-      id: Date.now().toString(),
-      username,
-      email,
-      password,
-      role: "user",
-      avatar: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
-    };
-
-    const updatedUsers = [...users, newUser];
-    setUsers(updatedUsers);
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
-  };
+  },
 
   // Đăng nhập
-  const login = (email, password) => {
-    if (!users.length) throw new Error("Danh sách user chưa sẵn sàng!");
+  login: async (email, password) => {
+    try {
+      // Sử dụng đúng endpoint /account thay vì /users
+      const { data } = await axios.get(`${BASE_URL}/account`);
+      
+      // Log dữ liệu trả về từ API để kiểm tra
+      console.log("Dữ liệu người dùng từ Mock API: ", data);
 
-    const foundUser = users.find(u => u.email === email && u.password === password);
-    if (!foundUser) throw new Error("Sai email hoặc mật khẩu!");
+      // Tìm tài khoản đúng email và mật khẩu (so sánh không phân biệt chữ hoa chữ thường)
+      const foundUser = data.find(
+        (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+      );
 
-    setUser(foundUser);
-    localStorage.setItem("user", JSON.stringify(foundUser));
-    return foundUser;
-  };
+      console.log("Người dùng tìm thấy: ", foundUser); // Kiểm tra người dùng đã tìm thấy trong API
+
+      if (!foundUser) throw new Error("Sai email hoặc mật khẩu");
+
+      // Lưu thông tin người dùng vào localStorage và cập nhật trạng thái trong zustand
+      localStorage.setItem("user", JSON.stringify(foundUser));
+      set({ user: foundUser });
+
+      return foundUser;
+    } catch (error) {
+      console.error("Đăng nhập thất bại: ", error);
+      throw new Error("Sai email hoặc mật khẩu"); // Đẩy lỗi ra để hiển thị thông báo
+    }
+  },
 
   // Đăng xuất
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
-  };
+  logout: () => {
+    localStorage.removeItem("user"); // Xóa thông tin người dùng khỏi localStorage
+    set({ user: null }); // Đặt lại state về null
+  },
 
-  // Update username
-  const updateUsername = (newName) => {
-    if (!user) return;
-    const updated = { ...user, username: newName };
-    const updatedUsers = users.map(u => u.id === user.id ? updated : u);
-    setUsers(updatedUsers);
-    setUser(updated);
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
-    localStorage.setItem("user", JSON.stringify(updated));
-  };
+  // Cập nhật thông tin người dùng
+  updateUser: async (id, updates) => {
+    try {
+      const { data } = await axios.put(`${BASE_URL}/account/${id}`, updates);
+      if (JSON.parse(localStorage.getItem("user"))?.id === id) {
+        localStorage.setItem("user", JSON.stringify(data));
+        set({ user: data });
+      }
+      return data;
+    } catch (error) {
+      console.error("Cập nhật người dùng thất bại: ", error);
+      throw new Error("Cập nhật thất bại");
+    }
+  },
 
-  return (
-    <AuthContext.Provider value={{ user, register, login, logout, updateUsername }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-export const useAuth = () => useContext(AuthContext);
+  // Cập nhật tên người dùng
+  updateUsername: async (newName) => {
+    set((state) => {
+      if (!state.user) return {};
+      const updated = { ...state.user, username: newName };
+      axios.put(`${BASE_URL}/account/${state.user.id}`, updated);
+      localStorage.setItem("user", JSON.stringify(updated));
+      return { user: updated };
+    });
+  },
+}));

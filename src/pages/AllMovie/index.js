@@ -1,77 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./style.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useMovies } from "../../context/MovieContext";
-
-// Danh mục thể loại (khớp với dữ liệu)
-const categories = [
-  { label: "Tất cả", value: "tat-ca" },
-  { label: "Anime", value: "anime" },
-  { label: "Hành Động", value: "hành động" },
-  { label: "Siêu Nhiên", value: "siêu nhiên" },
-  { label: "Phiêu Lưu", value: "phiêu lưu" },
-  { label: "Hài Hước", value: "hài hước" },
-  { label: "Viễn Tưởng", value: "viễn tưởng" },
-];
-
-// Quốc gia (khớp dữ liệu JSON)
-const countries = [
-  { label: "Tất cả", value: "tat-ca" },
-  { label: "Nhật Bản", value: "nhật bản" },
-  { label: "Mỹ", value: "mỹ" },
-  { label: "Trung Quốc", value: "trung quốc" },
-  { label: "Việt Nam", value: "việt nam" },
-];
+import axios from "axios";
 
 const AllMovies = () => {
-  const { allMovies } = useMovies();
+  const [allMovies, setAllMovies] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(15);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
-  const [visibleCount, setVisibleCount] = useState(15);
 
   // Lấy params từ URL
   const params = new URLSearchParams(location.search);
-  const genre = params.get("theloai");
-  const country = params.get("quocgia");
+  const genreParam = params.get("theloai");
+  const countryParam = params.get("quocgia");
 
-  // Lọc phim theo thể loại và quốc gia
+  // Lấy dữ liệu từ API
+  useEffect(() => {
+    axios
+      .get("https://68faff8894ec96066024411b.mockapi.io/movies")
+      .then((res) => {
+        setAllMovies(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError("Lỗi tải dữ liệu");
+        setLoading(false);
+      });
+  }, []);
+
+  // --- DYNAMIC GENRES & COUNTRIES ---
+  const genres = [...new Set(allMovies.flatMap((m) => m.genre.split(", ").map((g) => g.trim())))];
+  const countries = [...new Set(allMovies.map((m) => m.country))];
+
+  // Lọc phim
   let filteredMovies = allMovies;
-
-  // ✅ Lọc thể loại: tách genre thành mảng
-  if (genre && genre !== "tat-ca") {
-    filteredMovies = filteredMovies.filter((m) => {
-      const genres = m.genre?.toLowerCase().split(",").map((g) => g.trim());
-      return genres?.includes(genre.toLowerCase());
-    });
+  if (genreParam && genreParam !== "tat-ca") {
+    filteredMovies = filteredMovies.filter((m) =>
+      m.genre.split(",").map((g) => g.trim().toLowerCase()).includes(genreParam.toLowerCase())
+    );
   }
-
-  // ✅ Lọc quốc gia
-  if (country && country !== "tat-ca") {
+  if (countryParam && countryParam !== "tat-ca") {
     filteredMovies = filteredMovies.filter(
-      (m) => m.country?.toLowerCase() === country.toLowerCase()
+      (m) => m.country.toLowerCase() === countryParam.toLowerCase()
     );
   }
 
-  // ✅ Xử lý click filter
   const handleFilter = (type: "theloai" | "quocgia", value: string) => {
     const newParams = new URLSearchParams(location.search);
-
     if (type === "theloai") {
       if (value === "tat-ca") newParams.delete("theloai");
       else newParams.set("theloai", value);
     }
-
     if (type === "quocgia") {
       if (value === "tat-ca") newParams.delete("quocgia");
       else newParams.set("quocgia", value);
     }
-
     navigate(`/danh-sach?${newParams.toString()}`);
   };
 
-  const handleSeeMore = () => {
-    setVisibleCount(filteredMovies.length);
-  };
+  const handleSeeMore = () => setVisibleCount(filteredMovies.length);
+
+  if (loading) return <div>Đang tải phim...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="all-movies-page">
@@ -80,37 +72,47 @@ const AllMovies = () => {
 
       {/* Bộ lọc thể loại & quốc gia */}
       <div className="filter-wrapper">
-        {/* Thể loại */}
         <div className="filter-section">
           <span className="filter-label">Thể loại:</span>
           <div className="filter-options">
-            {categories.map((cat) => (
+            <button
+              onClick={() => handleFilter("theloai", "tat-ca")}
+              className={`filter-btn ${!genreParam ? "active" : ""}`}
+            >
+              Tất cả
+            </button>
+            {genres.map((g) => (
               <button
-                key={cat.value}
-                onClick={() => handleFilter("theloai", cat.value)}
+                key={g}
+                onClick={() => handleFilter("theloai", g)}
                 className={`filter-btn ${
-                  genre === cat.value ? "active" : ""
+                  genreParam?.toLowerCase() === g.toLowerCase() ? "active" : ""
                 }`}
               >
-                {cat.label}
+                {g}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Quốc gia */}
         <div className="filter-section">
           <span className="filter-label">Quốc gia:</span>
           <div className="filter-options">
+            <button
+              onClick={() => handleFilter("quocgia", "tat-ca")}
+              className={`filter-btn ${!countryParam ? "active" : ""}`}
+            >
+              Tất cả
+            </button>
             {countries.map((c) => (
               <button
-                key={c.value}
-                onClick={() => handleFilter("quocgia", c.value)}
+                key={c}
+                onClick={() => handleFilter("quocgia", c)}
                 className={`filter-btn ${
-                  country === c.value ? "active" : ""
+                  countryParam?.toLowerCase() === c.toLowerCase() ? "active" : ""
                 }`}
               >
-                {c.label}
+                {c}
               </button>
             ))}
           </div>
@@ -138,7 +140,6 @@ const AllMovies = () => {
         )}
       </div>
 
-      {/* Nút xem thêm */}
       {visibleCount < filteredMovies.length && (
         <div className="see-more-container">
           <button className="see-more-btn" onClick={handleSeeMore}>

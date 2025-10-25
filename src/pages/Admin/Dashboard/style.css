@@ -1,77 +1,92 @@
+/* ============================== */
+/* 🎬 DASHBOARD TỔNG QUAN */
+/* ============================== */
 .dashboard {
-  padding: 24px;
+  padding: 40px;
+  color: #000;
+  background: #ffffff;
+  font-family: "Inter", sans-serif;
+  min-height: 100vh;
 }
 
 .dashboard h2 {
-  margin-top: 0;
-  color: #1f2937;
-  font-size: 24px;
+  text-align: center;
+  margin-bottom: 10px;
   font-weight: 600;
-  margin-bottom: 8px;
 }
 
 .dashboard p {
-  color: #6b7280;
-  margin-bottom: 24px;
+  text-align: center;
+  color: #bbb;
   font-size: 15px;
+  margin-bottom: 30px;
 }
 
-/* ====== Stats Row ====== */
+/* ============================== */
+/* 🧮 HÀNG CHỨA THẺ THỐNG KÊ */
+/* ============================== */
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  justify-content: center;
 }
 
+/* ============================== */
+/* 📊 THẺ THỐNG KÊ */
+/* ============================== */
 .stat-card {
-  background: #ffffff;
-  padding: 18px;
+  background: #828282;
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  padding: 22px 26px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 4px solid #3b82f6; /* default màu xanh */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: default;
+  border-top: 4px solid #333;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s ease;
 }
 
+/* hiệu ứng nhẹ khi hover */
 .stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: #1a1a1a;
 }
 
+/* ============================== */
+/* 🧾 NỘI DUNG TRONG THẺ */
+/* ============================== */
 .stat-title {
-  font-size: 13px;
-  color: #6b7280;
+  color: #aaa;
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .stat-value {
-  font-size: 22px;
-  font-weight: 600;
-  color: #111827;
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 6px;
 }
 
 .stat-icon {
-  color: white;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 20px;
+  font-size: 26px;
+  color: #fff;
+  border-radius: 50%;
+  padding: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* ====== Responsive ====== */
-@media (max-width: 1024px) {
-  .stats-row {
-    grid-template-columns: repeat(2, 1fr);
+/* ============================== */
+/* 📱 RESPONSIVE */
+/* ============================== */
+@media (max-width: 600px) {
+  .stat-value {
+    font-size: 22px;
   }
-}
 
-@media (max-width: 640px) {
   .stats-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
