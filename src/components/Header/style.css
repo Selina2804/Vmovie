@@ -368,9 +368,15 @@
   align-self: flex-end;
   margin-bottom: 20px;
   transition: color 0.3s;
+  background: none;      
+  border: none;          
+  outline: none;         
+  padding: 0;            
 }
 
-.close-btn:hover { color: #ffaa00; }
+.close-btn:hover {
+  color: #ffaa00;
+}
 
 .mobile-menu a {
   color: white;
