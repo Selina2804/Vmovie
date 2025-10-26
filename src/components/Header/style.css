@@ -145,13 +145,13 @@
   animation: fadeIn 0.25s ease;
   z-index: 100;
   backdrop-filter: blur(10px);
-  color: #ffffff; /* chữ trắng trong dropdown */
+  color: #ffffff;
 }
 
 /* 🔹 Dropdown item (mục trong danh sách thể loại & quốc gia) */
 .dropdown-item {
   background: rgba(255, 255, 255, 0.05);
-  color: #ffffff !important; /* chữ trắng */
+  color: #ffffff !important;
   padding: 8px 12px;
   border-radius: 6px;
   font-size: 14px;
@@ -159,9 +159,10 @@
   cursor: pointer;
 }
 
-.dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffcc00;
+/* ✅ FIX màu hover quá sáng */
+.dropdown-menu-large .dropdown-item:hover {
+  background: rgba(120, 120, 120, 0.35) !important; /* xám nhạt dịu hơn */
+  color: #ffcc00 !important;
   transform: translateY(-2px);
 }
 
