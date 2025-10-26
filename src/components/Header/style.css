@@ -91,20 +91,9 @@
   align-items: center;
 }
 
-/* Hiệu ứng gạch dưới */
+/* 🔹 Bỏ gạch dưới khi hover */
 .nav a::after {
-  content: "";
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 0%;
-  height: 2px;
-  background: #ffcc00;
-  transition: width 0.3s ease;
-}
-
-.nav a:hover::after {
-  width: 100%;
+  display: none;
 }
 
 .nav a:hover {
@@ -124,24 +113,13 @@
   transition: color 0.3s ease;
 }
 
+/* 🔹 Bỏ gạch dưới khi hover dropdown */
+.dropdown-click::after {
+  display: none;
+}
+
 .dropdown-click:hover {
   color: #ffcc00;
-}
-
-/* Gạch dưới cho dropdown */
-.dropdown-click::after {
-  content: "";
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 0%;
-  height: 2px;
-  background: #ffcc00;
-  transition: width 0.3s ease;
-}
-
-.dropdown-click:hover::after {
-  width: 100%;
 }
 
 .dropdown-click > span {
@@ -272,8 +250,14 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .suggestion-title {
@@ -327,9 +311,20 @@
   margin-right: 15px;
 }
 
-.movie-info h4 { margin: 0; font-size: 15px; font-weight: 600; }
-.movie-info p { margin: 2px 0; font-size: 13px; color: #bbb; }
-.movie-info span { font-size: 12px; color: #888; }
+.movie-info h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+.movie-info p {
+  margin: 2px 0;
+  font-size: 13px;
+  color: #bbb;
+}
+.movie-info span {
+  font-size: 12px;
+  color: #888;
+}
 
 .see-all-btn {
   width: 100%;
@@ -392,8 +387,12 @@
 }
 
 @keyframes slideIn {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 .close-btn {
@@ -423,7 +422,16 @@
   transition: color 0.3s;
 }
 
-.mobile-menu a:hover { color: #ffcc00; }
+.mobile-menu a:hover {
+  color: #ffcc00;
+}
+
+/* 🎯 THÊM GẠCH PHÂN CÁCH DƯỚI “THỂ LOẠI” VÀ “QUỐC GIA” */
+.mobile-dropdown {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
 
 .mobile-dropdown span {
   display: flex;
@@ -447,7 +455,9 @@
   transition: color 0.2s;
 }
 
-.mobile-dropdown li:hover { color: #ffcc00; }
+.mobile-dropdown li:hover {
+  color: #ffcc00;
+}
 
 .mobile-user-section {
   margin-top: auto;
@@ -487,9 +497,17 @@
 }
 
 /* 🎬 RESPONSIVE FIX */
-.header-right.hidden { display: none !important; }
+.header-right.hidden {
+  display: none !important;
+}
 
 @media (max-width: 1050px) {
-  .nav, .search-bar, .header-right { display: none; }
-  .mobile-menu-icon { display: flex; }
+  .nav,
+  .search-bar,
+  .header-right {
+    display: none;
+  }
+  .mobile-menu-icon {
+    display: flex;
+  }
 }
