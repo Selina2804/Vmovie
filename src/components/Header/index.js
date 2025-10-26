@@ -5,8 +5,8 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FiSearch } from "react-icons/fi";
 import logo from "../../assets/vmovie.png";
 import { useNavigate } from "react-router-dom";
-import { useMovies } from "../../context/MovieContext";
 import { useAuth } from "../../store/useAuth";
+import axios from "axios";
 
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -18,21 +18,38 @@ function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showMobileGenre, setShowMobileGenre] = useState(false);
   const [showMobileCountry, setShowMobileCountry] = useState(false);
+  const [allMovies, setAllMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
-  const { allMovies } = useMovies();
   const { user, logout, updateUsername } = useAuth();
 
   const genreRef = useRef(null);
   const countryRef = useRef(null);
   const searchRef = useRef(null);
 
+  // 🔹 Lấy dữ liệu từ MockAPI
+  useEffect(() => {
+    axios
+      .get("https://68faff8894ec96066024411b.mockapi.io/movies")
+      .then((res) => {
+        setAllMovies(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Lỗi tải dữ liệu phim:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  // 🔹 Xử lý scroll đổi màu header
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // 🔹 Click ngoài để đóng dropdown / search
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -52,6 +69,7 @@ function Header() {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
+  // 🔹 Đóng menu khi phóng to cửa sổ
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 900) setIsMobileMenuOpen(false);
@@ -60,6 +78,7 @@ function Header() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // 🔹 Xử lý tìm kiếm
   const handleSearch = (e) => {
     e.preventDefault();
     if (query.trim()) {
@@ -89,21 +108,33 @@ function Header() {
     navigate(`/thong-tin/${movie.id}`);
   };
 
+  // 🔹 Lấy thể loại & quốc gia động
   const genres = [
     ...new Set(allMovies.flatMap((m) => m.genre.split(", ").map((g) => g.trim()))),
   ];
   const countries = [...new Set(allMovies.map((m) => m.country))];
 
+  if (loading) {
+    return (
+      <header className="header">
+        <div className="logo">
+          <img src={logo} alt="logo" />
+        </div>
+        <span style={{ color: "#fff" }}>Đang tải dữ liệu phim...</span>
+      </header>
+    );
+  }
+
   return (
     <>
       <header className={`header ${isScrolled ? "scrolled" : ""}`}>
-        {/* Left */}
+        {/* LEFT */}
         <div className="header-left">
           <div className="logo" onClick={() => navigate("/")}>
             <img src={logo} alt="logo" />
           </div>
 
-          {/* Search bar */}
+          {/* SEARCH BAR */}
           <form className="search-bar" onSubmit={handleSearch} ref={searchRef}>
             <FiSearch className="search-icon" />
             <input
@@ -130,8 +161,7 @@ function Header() {
                           <h4>{movie.title}</h4>
                           <p>{movie.engTitle}</p>
                           <span>
-                            T{Math.floor(Math.random() * 10) + 10} • {movie.year} •{" "}
-                            {movie.duration}
+                            {movie.year} • {movie.duration}
                           </span>
                         </div>
                       </li>
@@ -156,12 +186,12 @@ function Header() {
           </form>
         </div>
 
-        {/* NAV PC */}
+        {/* NAVIGATION */}
         <nav className="nav">
           <a href="/">Trang Chủ</a>
           <a href="/danh-sach">Danh Sách</a>
 
-          {/* Dropdown Thể loại */}
+          {/* DROPDOWN THỂ LOẠI */}
           <div
             className="dropdown-click"
             ref={genreRef}
@@ -178,15 +208,14 @@ function Header() {
                 className="dropdown-menu-large"
                 style={{
                   marginTop: "5px",
-                  background: "rgba(20, 20, 20, 0.98)",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  background: "rgba(20, 20, 20, 0.95)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
                 }}
               >
                 {genres.map((g) => (
                   <div
                     key={g}
                     className="dropdown-item"
-                    style={{ color: "#fff" }}
                     onClick={() => navigate(`/danh-sach?theloai=${g}`)}
                   >
                     {g}
@@ -196,7 +225,7 @@ function Header() {
             )}
           </div>
 
-          {/* Dropdown Quốc gia */}
+          {/* DROPDOWN QUỐC GIA */}
           <div
             className="dropdown-click"
             ref={countryRef}
@@ -212,16 +241,15 @@ function Header() {
               <div
                 className="dropdown-menu-large"
                 style={{
-                  marginTop: "12px",
-                  background: "rgba(20, 20, 20, 0.98)",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  marginTop: "5px",
+                  background: "rgba(20, 20, 20, 0.95)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
                 }}
               >
                 {countries.map((c) => (
                   <div
                     key={c}
                     className="dropdown-item"
-                    style={{ color: "#fff" }}
                     onClick={() => navigate(`/danh-sach?quocgia=${c}`)}
                   >
                     {c}
@@ -232,7 +260,7 @@ function Header() {
           </div>
         </nav>
 
-        {/* USER */}
+        {/* USER SECTION */}
         <div className={`header-right ${isMobileMenuOpen ? "hidden" : ""}`}>
           {user ? (
             <div className="user-menu" onClick={() => setShowMenu(!showMenu)}>
@@ -242,7 +270,7 @@ function Header() {
               {showMenu && (
                 <div className="dropdown-menu">
                   {user.role === "admin" && (
-                    <button onClick={() => navigate("/admin")}>Về trang quản lý</button>
+                    <button onClick={() => navigate("/admin")}>Quản lý</button>
                   )}
                   <button
                     onClick={() => {
@@ -263,7 +291,7 @@ function Header() {
           )}
         </div>
 
-        {/* Mobile menu icon */}
+        {/* ICON MENU MOBILE */}
         <div
           className={`mobile-menu-icon ${isMobileMenuOpen ? "hidden" : ""}`}
           onClick={() => setIsMobileMenuOpen(true)}
@@ -325,7 +353,7 @@ function Header() {
           <div className="mobile-user-section">
             {user ? (
               <>
-                <div className="mobile-user" onClick={() => setShowMenu(!showMenu)}>
+                <div className="mobile-user">
                   <img src={user.avatar} alt="avatar" className="avatar" />
                   <span>{user.username}</span>
                 </div>
@@ -338,7 +366,7 @@ function Header() {
                       setIsMobileMenuOpen(false);
                     }}
                   >
-                    Về trang quản lý
+                    Quản lý
                   </button>
                 )}
 

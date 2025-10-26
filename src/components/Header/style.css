@@ -128,6 +128,7 @@
   gap: 4px;
 }
 
+/* 🔹 Dropdown menu nền tối */
 .dropdown-menu-large {
   position: absolute;
   top: 170%;
@@ -144,11 +145,13 @@
   animation: fadeIn 0.25s ease;
   z-index: 100;
   backdrop-filter: blur(10px);
+  color: #ffffff; /* chữ trắng trong dropdown */
 }
 
+/* 🔹 Dropdown item (mục trong danh sách thể loại & quốc gia) */
 .dropdown-item {
   background: rgba(255, 255, 255, 0.05);
-  color: #f0f0f0;
+  color: #ffffff !important; /* chữ trắng */
   padding: 8px 12px;
   border-radius: 6px;
   font-size: 14px;
@@ -157,7 +160,7 @@
 }
 
 .dropdown-item:hover {
-  background: rgba(255, 204, 0, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   color: #ffcc00;
   transform: translateY(-2px);
 }
